@@ -1,15 +1,15 @@
-import React from 'react'
-import Home from './pages/Home'
-
+import React from "react";
+import SiteRoute from "./SiteRoute";
 
 function App() {
   return (
-    <>
+    <div>
       <div>
-        <Home />
+        <SiteRoute />
       </div>
-    </>
-  )
+    </div>
+  );
 }
 
-export default App
+export default App;
+ 

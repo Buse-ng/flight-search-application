@@ -1,13 +1,29 @@
-import React from 'react'
-import { IoIosCalendar } from "react-icons/io";
+import React, { useContext, useState } from "react";
 import { TbArrowsLeftRight } from "react-icons/tb";
+import { FlightContext } from "../context/FlightContext";
+import { DateContext } from "../context/DateContext";
 
 const FlightFormBody = () => {
+  const { flights } = useContext(FlightContext);
+
+  const {
+    handleSubmitForDate,
+    departureDate,
+    setDepartureDate,
+    returnDate,
+    setReturnDate,
+    isOneWay,
+    setIsOneWay,
+    dateError,
+    setDateError,
+    today,
+  } = useContext(DateContext);
+
 
   return (
     <>
       {/* flight form body */}
-      <form className="p-4 md:p-5" id="form">
+      <form className="p-4 md:p-5" id="form" onSubmit={handleSubmitForDate}>
         <div className="grid gap-4 mb-4 grid-cols-2">
           {/* departure airport */}
           <div className="col-span-2 sm:col-span-1">
@@ -45,61 +61,65 @@ const FlightFormBody = () => {
               required=""
             />
           </div>
-          {/* date */}
+          {/* date area */}
           <div className="col-span-2 md:flex">
-            {/* deparature date */}
+            {/* departure date */}
             <div>
-              <label htmlFor="departure_date" className="block mb-2 text-sm font-medium text-gray-900">
+              <label
+                htmlFor="departure_date"
+                className="block mb-2 text-sm font-medium text-gray-900"
+              >
                 Departure Date
               </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                  <span className="w-4 h-4 text-gray-500 ">
-                    <IoIosCalendar className="w-5 h-5" />
-                  </span>
-                </div>
-                <input
-                  id="departure_date"
-                  type="text"
-                  name="departure_date"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 placeholder-gray-400 
-                  text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full ps-10 p-2.5 "
-                  placeholder="DD/MM/YY"
-                />
-              </div>
+
+              <input
+                id="departure_date"
+                type="date"
+                name="departure_date"
+                value={departureDate}
+                onChange={(e) => setDepartureDate(e.target.value)}
+                className={`bg-gray-50 border border-gray-300 text-gray-900 placeholder-gray-400 
+                text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full ps-10 p-2.5 
+                ${dateError && "border-red-500"}`}
+                min={today.toISOString().split("T")[0]}
+              />
+
+              {dateError && (
+                <p className="text-red-500 text-sm mt-2">{dateError}</p>
+              )}
             </div>
-            <span 
-              className="mx-4 mt-6 text-xl text-gray-500 hidden md:flex items-center"
+            <span
+              className={` ${
+                isOneWay
+                  ? "hidden"
+                  : "mx-4 mt-6 text-xl text-gray-500 hidden md:flex items-center"
+              }`}
             >
               <TbArrowsLeftRight />
             </span>
+
             {/* return date */}
-            <div className='mt-4 md:mt-0'>
-              <label 
-                htmlFor="return_date" 
-                className="block mb-2 text-sm font-medium text-gray-900"
-              >
-                Return Date
-              </label>
-              
-              <div className="relative">
-                <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                  <span className="w-4 h-4 text-gray-500">
-                    <IoIosCalendar className="w-5 h-5" />
-                  </span>
-                </div>
+            {!isOneWay && (
+              <div className="mt-4 md:mt-0">
+                <label
+                  htmlFor="return_date"
+                  className="block mb-2 text-sm font-medium text-gray-900"
+                >
+                  Return Date
+                </label>
 
                 <input
                   id="return_date"
                   name="return_date"
-                  type="text"
+                  type="date"
+                  value={returnDate}
+                  onChange={(e) => setReturnDate(e.target.value)}
+                  min={departureDate}
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm w-full ps-10 p-2.5
                   rounded-lg focus:ring-green-500 focus:border-green-500 block placeholder-gray-400"
-                  placeholder="DD/MM/YYYY"
-                  // disabled={}
                 />
               </div>
-            </div>
+            )}
           </div>
           {/* one way checkbox */}
           <div className="col-span-2">
@@ -108,9 +128,9 @@ const FlightFormBody = () => {
                 id="checkbox_way"
                 defaultChecked={true}
                 type="checkbox"
-                defaultValue=""
                 className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 
                 rounded focus:ring-green-500 focus:ring-2"
+                onChange={() => setIsOneWay(!isOneWay)}
               />
               <label
                 htmlFor="checkbox_way"
@@ -133,6 +153,6 @@ const FlightFormBody = () => {
       </form>
     </>
   );
-}
+};
 
-export default FlightFormBody
+export default FlightFormBody;
