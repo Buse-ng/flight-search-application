@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react";
 import { TbArrowsLeftRight } from "react-icons/tb";
 import { FlightContext } from "../context/FlightContext";
 import { DateContext } from "../context/DateContext";
+import { AirportContext } from "../context/AirportContext";
 
 const FlightFormBody = () => {
   const { flights } = useContext(FlightContext);
@@ -19,6 +20,22 @@ const FlightFormBody = () => {
     today,
   } = useContext(DateContext);
 
+  const {
+    departureAirport,
+    setDepartureAirport,
+    arrivalAirport,
+    setArrivalAirport,
+    filteredDepartureAirports,
+    setFilteredDepartureAirports,
+    selectedDepartureAirport,
+    setSelectedDepartureAirport,
+    selectedArrivalAirport,
+    setSelectedArrivalAirport,
+    filteredArrivalAirports,
+    setFilteredArrivalAirports,
+    handleAirportChange,
+    handleAirportSelect,
+  } = useContext(AirportContext);
 
   return (
     <>
@@ -37,12 +54,29 @@ const FlightFormBody = () => {
               id="departure_airport"
               name="departure_airport"
               type="text"
+              value={departureAirport}
+              onChange={(e) => handleAirportChange(e, true)}
               className="block bg-gray-100 border border-gray-200 text-gray-900  
               rounded-lg text-sm w-full p-2.5 placeholder-gray-400"
               placeholder="Departure Airport"
               required=""
             />
+            <div>
+              {filteredDepartureAirports.length > 0 && (
+                <ul className="airport-list">
+                  {filteredDepartureAirports.map((airport, id) => (
+                    <li
+                      key={`departure-${id}`}
+                      onClick={() => handleAirportSelect(airport, true)}
+                    >
+                      {airport.code} - {airport.city}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
           </div>
+
           {/* arrival airport */}
           <div className="col-span-2 sm:col-span-1">
             <label
@@ -55,12 +89,29 @@ const FlightFormBody = () => {
               id="arrival_airport"
               name="arrival_airport"
               type="text"
+              value={arrivalAirport}
+              onChange={(e) => handleAirportChange(e, false)}
               className="bg-gray-100 border border-gray-200 text-gray-900 text-sm rounded-lg 
               block w-full p-2.5 placeholder-gray-400"
               placeholder="Arrival Airport"
               required=""
             />
+            <div>
+              {filteredArrivalAirports.length > 0 && (
+                <ul className="airport-list">
+                  {filteredArrivalAirports.map((airport, id) => (
+                    <li
+                      key={`arrival-${id}`}
+                      onClick={() => handleAirportSelect(airport, false)}
+                    >
+                      {airport.code} - {airport.city}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
           </div>
+
           {/* date area */}
           <div className="col-span-2 md:flex">
             {/* departure date */}
